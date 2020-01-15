@@ -1,77 +1,111 @@
 package com.incident.management.domain;
 
+import com.google.common.base.Preconditions;
 import com.incident.management.domain.exceptions.PropertyRequiredException;
-import lombok.AllArgsConstructor;
-
-import lombok.Builder;
 import lombok.Data;
+
 import java.sql.Blob;
 
 @Data
-@AllArgsConstructor
 public class Incident {
-    private Long id;
+
     private final String title;
-    private final Category category;
+    private final Priority priority;
     private final User createdBy;
     private final String description;
-    private IncidentStatus status=IncidentStatus.OPEN;
+    private Long id;
+    private IncidentStatus status= IncidentStatus.OPEN;
     private Blob content;
+    private AssigneeID assigneeID;
+    private Resolution resolution;
 
-    public static Builder builder(){
+    private IncidentVersion fixVersion;
 
+    private Incident(String title, Priority priority, User createdBy, String description, Long id, Blob content, AssigneeID assigneeID) {
+        this.title = title;
+        this.priority = priority;
+        this.createdBy = createdBy;
+        this.description = description;
+        this.id = id;
+        this.content = content;
+        this.assigneeID = assigneeID;
+    }
+
+    public static Builder builder() {
         return new Builder();
     }
-    public static class Builder{
+
+    public void assignTo(AssigneeID assigneeID) {
+        Preconditions.checkArgument(assigneeID != null, "AssigneeID can not be null!");
+        this.status = status.assign();
+        this.assigneeID = assigneeID;
+    }
+
+    public void fixedIn(IncidentVersion version) {
+        Preconditions.checkArgument(version!=null,"Incident version can not be null!");
+        this.status = status.resolved();
+        this.resolution=Resolution.FIXED;
+        this.fixVersion=version;
+    }
+
+
+
+    public static class Builder {
 
         private Long id;
         private String title;
-        private Category category;
+        private Priority priority;
         private User createdBy;
         private String description;
-        private IncidentStatus status=IncidentStatus.OPEN;
         private Blob content;
+        private AssigneeID assigneeID;
 
 
-        public Builder withId(Long id){
-            this.id=id;
-            return this;
-        }
-        public  Builder withTitle(String title){
-            this.title=title;
-            return this;
-        }
-        public  Builder withCategory( Category category){
-            this.category=category;
-            return this;
-        }
-        public  Builder withCreatedBy(User createdBy){
-            this.createdBy=createdBy;
-            return this;
-        }
-        public  Builder withDescription(String description){
-            this.description=description;
-            return this;
-        }
-        public  Builder withContent(Blob content){
-            this.content=content;
-            return this;
-        }
-        public  Builder withStatus(IncidentStatus status){
-            this.status=status;
+        public Builder withId(Long id) {
+            this.id = id;
             return this;
         }
 
-        public Incident build(){
+        public Builder withTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder withPriority(Priority priority) {
+            this.priority = priority;
+            return this;
+        }
+
+        public Builder withCreatedBy(User createdBy) {
+            this.createdBy = createdBy;
+            return this;
+        }
+
+        public Builder withDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder withContent(Blob content) {
+            this.content = content;
+            return this;
+        }
+
+        public Builder withAssignee(AssigneeID assigneeID) {
+            this.assigneeID = assigneeID;
+            return this;
+        }
+
+        public Incident build() {
             checkProperty();
-            return new Incident(this.id,title,category,createdBy,description,status,content);
-      }
+            return new Incident(title, priority, createdBy, description, this.id, content, assigneeID);
+        }
 
         private void checkProperty() {
-            if (title==null) throw new PropertyRequiredException(this.getClass().getName(),"title");
-            if (description==null) throw new PropertyRequiredException(this.getClass().getName(),"description");
-            if (category==null) throw new PropertyRequiredException(this.getClass().getName(),"category");
-            if (createdBy==null) throw new PropertyRequiredException(this.getClass().getName(),"createdBy");
+            if (title == null) throw new PropertyRequiredException(this.getClass().getName(), "title");
+            if (description == null) throw new PropertyRequiredException(this.getClass().getName(), "description");
+            if (priority == null) throw new PropertyRequiredException(this.getClass().getName(), "category");
+            if (createdBy == null) throw new PropertyRequiredException(this.getClass().getName(), "createdBy");
         }
 
     }

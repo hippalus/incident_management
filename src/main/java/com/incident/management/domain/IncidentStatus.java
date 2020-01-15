@@ -1,7 +1,7 @@
 package com.incident.management.domain;
 
-public enum IncidentStatus {
-    IN_PROGRESS, OPEN, PENDING,APPROVAL, REOPENED, SOLVED
+public enum IncidentStatus implements ChainStatus {
+    OPEN, IN_PROGRESS, PENDING, APPROVAL, REOPENED, ASSIGNED, RESOLVED
 
 
 }
