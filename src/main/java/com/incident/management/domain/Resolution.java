@@ -1,6 +1,6 @@
 package com.incident.management.domain;
 
 public enum  Resolution {
-    FIXED;
+    FIXED, DUPLICATE, CANNOT_REPRODUCE, WONT_FIX;
 
 }

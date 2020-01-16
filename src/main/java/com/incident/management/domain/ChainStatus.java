@@ -5,7 +5,15 @@ public interface ChainStatus {
         return IncidentStatus.ASSIGNED;
     }
 
-    default IncidentStatus resolved(){
+    default IncidentStatus resolved() {
         return IncidentStatus.RESOLVED;
+    }
+
+    default IncidentStatus close() {
+        return IncidentStatus.CLOSED;
+    }
+
+    default IncidentStatus reopen() {
+        return IncidentStatus.OPEN;
     }
 }
