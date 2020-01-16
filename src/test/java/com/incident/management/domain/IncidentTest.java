@@ -336,6 +336,7 @@ public class IncidentTest {
 
     }
 
+
     private Incident closedIncident() {
         var incident = resolvedIncident();
         incident.close();

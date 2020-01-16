@@ -49,14 +49,14 @@ public class Incident {
 
     public void fixedIn(IncidentVersion version) {
         Preconditions.checkArgument(version != null, "Incident version can not be null!");
-        this.status = status.resolved();
+        this.status = status.resolve();
         this.resolution = Resolution.FIXED;
         this.fixVersion = version;
     }
 
     public void duplicateOf(IncidentNumber original) {
         Preconditions.checkArgument(original != null);
-        this.status = status.resolved();
+        this.status = status.resolve();
         this.resolution = Resolution.DUPLICATE;
         related.add(Incident.RelatedIncident.duplicateOf(this, original));
     }
@@ -76,14 +76,14 @@ public class Incident {
     }
 
     public void cannotReproduce() {
-        this.status = status.resolved();
+        this.status = status.resolve();
         resolution = Resolution.CANNOT_REPRODUCE;
     }
 
     public void wontFix(String reason) {
         Preconditions.checkArgument(reason != null);
         Preconditions.checkArgument(!reason.isEmpty());
-        this.status = status.resolved();
+        this.status = status.resolve();
         this.resolution = Resolution.WONT_FIX;
     }
 

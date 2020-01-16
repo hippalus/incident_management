@@ -5,7 +5,7 @@ public interface ChainStatus {
         return IncidentStatus.ASSIGNED;
     }
 
-    default IncidentStatus resolved() {
+    default IncidentStatus resolve() {
         return IncidentStatus.RESOLVED;
     }
 
@@ -16,4 +16,10 @@ public interface ChainStatus {
     default IncidentStatus reopen() {
         return IncidentStatus.OPEN;
     }
+
+    static IncidentStatus cannotTransitTo(IncidentStatus source, IncidentStatus target) {
+        throw new IllegalStateException(String.format("Cannot transit from %s to %s!", source, target));
+    }
+
+
 }
