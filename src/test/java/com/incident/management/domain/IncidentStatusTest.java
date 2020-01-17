@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
 class IncidentStatusTest {
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -68,4 +69,5 @@ class IncidentStatusTest {
                 .withMessage("Cannot transit from CLOSED to RESOLVED!");
 
     }
+
 }

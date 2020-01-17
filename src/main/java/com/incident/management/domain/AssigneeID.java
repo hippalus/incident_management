@@ -13,4 +13,9 @@ public class AssigneeID {
     public static AssigneeID of(String id) {
         return new AssigneeID(id);
     }
+
+    @Override
+    public String toString() {
+        return getId();
+    }
 }

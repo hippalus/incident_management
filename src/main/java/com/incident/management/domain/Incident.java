@@ -12,7 +12,7 @@ import java.util.Set;
 import static com.incident.management.domain.Incident.RelatedIncident.RelationshipType;
 
 @Data
-public class Incident {
+public class Incident implements Serializable {
 
     private final String title;
     private final Priority priority;
@@ -111,7 +111,7 @@ public class Incident {
 
 
     protected static class RelatedIncident implements Serializable {
-
+        private static final long serialVersionUID = 1905122041950251207L;
         private Incident source;
         private IncidentNumber target;
         private RelationshipType type;
