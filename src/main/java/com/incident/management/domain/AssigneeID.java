@@ -2,8 +2,10 @@ package com.incident.management.domain;
 
 import lombok.Value;
 
+import java.io.Serializable;
+
 @Value
-public class AssigneeID {
+public class AssigneeID implements Serializable {
     private final String id;
 
     private AssigneeID(String id) {

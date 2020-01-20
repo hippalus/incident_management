@@ -1,6 +1,10 @@
 package com.incident.management.domain;
 
-public class User {
+import lombok.Data;
+
+import java.io.Serializable;
+@Data
+public class User implements Serializable {
     private Long id;
     private String firstName;
     private String lastName;
@@ -9,5 +13,8 @@ public class User {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public User() {
     }
 }

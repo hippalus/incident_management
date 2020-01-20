@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.Blob;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,11 +14,10 @@ import static com.incident.management.domain.Incident.RelatedIncident.Relationsh
 
 @Data
 public class Incident implements Serializable {
-
-    private final String title;
-    private final Priority priority;
-    private final User createdBy;
-    private final String description;
+    private String title;
+    private Priority priority;
+    private User createdBy;
+    private String description;
     private IncidentNumber id;
     private IncidentStatus status = IncidentStatus.OPEN;
     private Blob content;
@@ -26,15 +26,21 @@ public class Incident implements Serializable {
     private Set<RelatedIncident> related = new HashSet<>();
     private IncidentVersion fixVersion;
     private IncidentVersion occurredIn;
+    private LocalDateTime createdAt;
 
-    private Incident(String title, Priority priority, User createdBy, String description, IncidentNumber id, Blob content, AssigneeID assignee) {
-        this.title = title;
-        this.priority = priority;
-        this.createdBy = createdBy;
-        this.description = description;
-        this.id = id;
-        this.content = content;
-        this.assignee = assignee;
+
+    protected Incident() {
+    }
+
+    private Incident(Builder builder) {
+        this.title = builder.title;
+        this.priority = builder.priority;
+        this.createdBy = builder.createdBy;
+        this.description = builder.description;
+        this.id = builder.id;
+        this.content = builder.content;
+        this.assignee = builder.assignee;
+        this.createdAt=builder.createdAt;
     }
 
     public static Builder builder() {
@@ -153,7 +159,8 @@ public class Incident implements Serializable {
         private User createdBy;
         private String description;
         private Blob content;
-        private AssigneeID assigneeID;
+        private AssigneeID assignee;
+        private LocalDateTime createdAt;
 
 
         public Builder withId(IncidentNumber id) {
@@ -187,22 +194,26 @@ public class Incident implements Serializable {
         }
 
         public Builder withAssignee(AssigneeID assigneeID) {
-            this.assigneeID = assigneeID;
+            this.assignee = assigneeID;
+            return this;
+        }
+
+        public Builder withCreateAt(LocalDateTime createdAt) {
+            this.createdAt=createdAt;
             return this;
         }
 
         public Incident build() {
             checkProperty();
-            return new Incident(title, priority, createdBy, description, this.id, content, assigneeID);
+            return new Incident(this);
         }
 
         private void checkProperty() {
             if (title == null) throw new PropertyRequiredException(this.getClass().getName(), "title");
             if (description == null) throw new PropertyRequiredException(this.getClass().getName(), "description");
-            if (priority == null) throw new PropertyRequiredException(this.getClass().getName(), "category");
+            if (priority == null) throw new PropertyRequiredException(this.getClass().getName(), "priority");
             if (createdBy == null) throw new PropertyRequiredException(this.getClass().getName(), "createdBy");
         }
-
     }
 
 

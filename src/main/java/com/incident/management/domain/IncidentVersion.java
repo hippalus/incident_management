@@ -3,8 +3,10 @@ package com.incident.management.domain;
 import com.google.common.base.Preconditions;
 import lombok.Value;
 
+import java.io.Serializable;
+
 @Value
-public class IncidentVersion {
+public class IncidentVersion implements Serializable {
     private final String value;
 
     private IncidentVersion(String value) {
