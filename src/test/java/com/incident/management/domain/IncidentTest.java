@@ -321,7 +321,9 @@ public class IncidentTest {
     void should_fail_meaning_fully_if_referring_to_invalid_incident() {
         // given:
         var incident = newIncident();
-
+        String a="habip";
+        a="ss";
+        System.out.println(a);
         // when expect:
         assertThrows(IllegalArgumentException.class, () -> incident.relatedTo(null));
 

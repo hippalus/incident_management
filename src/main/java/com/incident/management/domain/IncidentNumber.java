@@ -6,10 +6,9 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Value
-public class IncidentNumber implements Serializable {
+public class IncidentNumber implements Serializable{
 
     private final String value;
-
     private IncidentNumber(String value) {
 
         this.value = value;
@@ -27,4 +26,6 @@ public class IncidentNumber implements Serializable {
     public String toString() {
         return getValue();
     }
+
+
 }

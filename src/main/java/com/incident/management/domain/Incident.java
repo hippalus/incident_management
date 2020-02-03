@@ -4,28 +4,45 @@ import com.google.common.base.Preconditions;
 import com.incident.management.domain.exceptions.PropertyRequiredException;
 import lombok.Data;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
 import static com.incident.management.domain.Incident.RelatedIncident.RelationshipType;
 
 @Data
+@Entity
+@Table(name = "incident")
 public class Incident implements Serializable {
-    private String title;
-    private Priority priority;
-    private User createdBy;
-    private String description;
+
+    @Id
     private IncidentNumber id;
+    @Column
+    private String title;
+    @Column
+    private Priority priority;
+    @Column
+    private User createdBy;
+    @Column
+    private String description;
+    @Enumerated(EnumType.STRING)
     private IncidentStatus status = IncidentStatus.OPEN;
-    private Blob content;
+    @Lob
+    private transient Blob content;
+    @Column
     private AssigneeID assignee;
+    @Enumerated(EnumType.STRING)
     private Resolution resolution;
+
+    @OneToMany(mappedBy = "source", cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
     private Set<RelatedIncident> related = new HashSet<>();
+    @Column
     private IncidentVersion fixVersion;
+    @Column
     private IncidentVersion occurredIn;
+    @Column
     private LocalDateTime createdAt;
 
 
@@ -114,15 +131,22 @@ public class Incident implements Serializable {
         Preconditions.checkArgument(other != null);
         this.related.add(RelatedIncident.relatedTo(this, other));
     }
-
-
-    protected static class RelatedIncident implements Serializable {
+    @Entity(name = "related_incident")
+    @Data
+    public static class RelatedIncident implements Serializable {
         private static final long serialVersionUID = 1905122041950251207L;
+        @Id
+        @ManyToOne(cascade = {CascadeType.ALL})
+        @JoinColumn(name = "source_incident_id")
         private Incident source;
+        @Column
+        @Id
         private IncidentNumber target;
+        @Id
+        @Enumerated(EnumType.STRING)
         private RelationshipType type;
 
-        private RelatedIncident() {
+        protected RelatedIncident() {
         }
 
         private RelatedIncident(Incident source, IncidentNumber target, RelationshipType type) {
