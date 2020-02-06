@@ -15,5 +15,9 @@ jobs:
         java-version: 1.11
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+
+env:
+  global:
+    - CODECOV_TOKEN="109638e7-23da-4e48-9ac0-199a3db59550"
 after_success:
   - bash <(curl -s https://codecov.io/bash)
