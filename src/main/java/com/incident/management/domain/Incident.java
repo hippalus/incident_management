@@ -3,6 +3,9 @@ package com.incident.management.domain;
 import com.google.common.base.Preconditions;
 import com.incident.management.domain.exceptions.PropertyRequiredException;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,10 +14,12 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import static com.incident.management.domain.Incident.RelatedIncident.RelationshipType;
+import static com.incident.management.domain.Incident.RelatedIncident.RelationshipType.*;
 
 @Data
 @Entity
 @Table(name = "incident")
+@EqualsAndHashCode(exclude = "related")
 public class Incident implements Serializable {
 
     @Id
@@ -85,7 +90,7 @@ public class Incident implements Serializable {
     }
 
     public boolean isDuplicateOf(IncidentNumber incidentNum) {
-        return hasRelationshipTo(incidentNum, RelationshipType.DUPLICATES);
+        return hasRelationshipTo(incidentNum, DUPLICATES);
     }
 
     public boolean hasRelationshipTo(IncidentNumber incidentNumber, RelationshipType relationshipType) {
@@ -127,22 +132,42 @@ public class Incident implements Serializable {
         related.add(RelatedIncident.blockedBy(this, blocker));
     }
 
+    public void markAsBlockerFor(IncidentNumber blocked) {
+        Preconditions.checkArgument(blocked!=null);
+        related.add(RelatedIncident.markAsBlockerFor(this,blocked));
+    }
+
+
     public void relatedTo(IncidentNumber other) {
         Preconditions.checkArgument(other != null);
         this.related.add(RelatedIncident.relatedTo(this, other));
     }
-    @Entity(name = "related_incident")
-    @Data
+
+    public void markAsBeingDuplicatedBy(IncidentNumber duplicate) {
+    related.add(RelatedIncident.duplicateBy(this,duplicate));
+    }
+
+    @Entity
+    @Getter@Setter
+    @Table(name = "related_incident")
     public static class RelatedIncident implements Serializable {
         private static final long serialVersionUID = 1905122041950251207L;
+
+        public enum RelationshipType {
+            BLOCKED_BY, RELATED_TO, DUPLICATED_BY, BLOCKER, DUPLICATES
+        }
+
         @Id
+        @GeneratedValue(strategy = GenerationType.SEQUENCE)
+        private Long  id;
+
         @ManyToOne(cascade = {CascadeType.ALL})
         @JoinColumn(name = "source_incident_id")
         private Incident source;
-        @Column
-        @Id
+
+        @Column(name = "target_incident_id")
         private IncidentNumber target;
-        @Id
+
         @Enumerated(EnumType.STRING)
         private RelationshipType type;
 
@@ -156,21 +181,29 @@ public class Incident implements Serializable {
         }
 
         public static RelatedIncident duplicateOf(Incident source, IncidentNumber target) {
-            return new RelatedIncident(source, target, RelationshipType.DUPLICATES);
+            return new RelatedIncident(source, target, DUPLICATES);
         }
 
         public static RelatedIncident blockedBy(Incident source, IncidentNumber target) {
-            return new RelatedIncident(source, target, RelationshipType.BLOCKED_BY);
+            return new RelatedIncident(source, target, BLOCKED_BY);
+        }
+
+        public static RelatedIncident markAsBlockerFor(Incident source, IncidentNumber blocked) {
+            return new RelatedIncident(source,blocked, BLOCKER);
         }
 
         public static RelatedIncident relatedTo(Incident source, IncidentNumber target) {
-            return new RelatedIncident(source, target, RelationshipType.RELATED_TO);
+            return new RelatedIncident(source, target, RELATED_TO);
         }
 
-        public enum RelationshipType {
-            BLOCKED_BY, RELATED_TO, DUPLICATES
+        public static RelatedIncident duplicateBy(Incident source, IncidentNumber target) {
+            return new RelatedIncident(source,target, DUPLICATED_BY);
         }
 
+        @Override
+        public String toString() {
+            return "";
+        }
 
     }
 
