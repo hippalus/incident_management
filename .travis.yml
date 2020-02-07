@@ -1,0 +1,20 @@
+sudo: false # faster builds
+language: java
+jdk:
+  - openjdk11
+
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+
+env:
+  global:
+    - CODECOV_TOKEN=109638e7-23da-4e48-9ac0-199a3db59550
+
+install:
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
+script:
+  - mvn clean package
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
