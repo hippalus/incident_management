@@ -6,6 +6,7 @@ jdk:
 cache:
   directories:
     - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
 
 env:
   global:
@@ -15,6 +16,7 @@ install:
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 script:
-  - mvn clean package
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify package sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=hippalus -Dsonar.login=544625bf78707bed3be3f1f0c74cd97ae5a267dd
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
