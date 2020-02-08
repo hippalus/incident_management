@@ -24,10 +24,10 @@ public class IncidentRelationshipServiceImp implements IncidentRelationshipServi
         incidentRepository.save(source);
         incidentRepository.save(target);
         incidentRepository.flush();
-
     }
 
     @Override
+    @Transactional
     public void markAsBlockedBy(IncidentNumber blocked, IncidentNumber blocker) {
         var blockedIncident = getIncidentById(blocked);
         var blockerIncident = getIncidentById(blocker);
